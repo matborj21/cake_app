@@ -23,6 +23,7 @@ class ProductsController extends AppController
         // var_dump($products);
         // exit;
         $this->set(compact('products'));
+        
     }
 
 
@@ -43,6 +44,8 @@ class ProductsController extends AppController
             $data =  $this->request->data;
             $data['cost'] = $data['price'] * $data['inventory'];
             $data['expiry'] = date("Y-m-d H:i:s");
+
+            
             $product = $this->Products->patchEntity($product, $data);
             
           

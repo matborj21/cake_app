@@ -26,9 +26,11 @@
                 <td><?= h($product->inventory)?></td>
                 <td><?= h($product->cost)?></td>
                 <td>
-                    <?php echo $this->Html->link('View', ['action' => 'view', $product->id], ['class' => 'btn btn-default']) ?>
-                    <a class="btn btn-primary editBtn" id=<?= $product->id ?>>Edit</a>
-                    <a class="btn btn-danger delete" id=<?= $product->id ?>>Delete</a>
+
+                    <a class='btn btn-default btn-sm' href="/products/view/<?= $product->id?>">View</a>
+                    <a class='btn btn-primary btn-sm' href="/products/edit/<?= $product->id?>">Edit</a>
+                    <a class='btn btn-danger btn-sm' href="/products/delete/<?= $product->id?>">Delete</a>
+
                 </td>
             </tr> <?php endforeach; ?>
         </tbody>
