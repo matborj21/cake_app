@@ -1,4 +1,4 @@
-<form class="form-horizontal" method="post" action="/products/add">
+<form class="form-horizontal" method="post" action="/products/add" enctype="multipart/form-data">
     <fieldset>
         <legend>New Product</legend>
         <div class=" form-group">
@@ -32,6 +32,12 @@
             <label for="inventory" class="col-lg-2 control-label">Product Inventory</label>
             <div class="col-lg-6 input-group ">
                 <input type="text" name="inventory" class="form-control" id="inventory" placeholder="Product Unit">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="image" class="col-lg-2 control-label">Product Image</label>
+            <div class="col-lg-6 input-group ">
+                <input type="file" name="image" class="form-control" id="image" placeholder="Product image">
             </div>
         </div>
 

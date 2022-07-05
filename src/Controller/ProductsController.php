@@ -18,10 +18,6 @@ class ProductsController extends AppController
     public function index()
     {
         $products = $this->Paginator->paginate($this->Products->find());
-        // $newdate = date("Y-m-d", strtotime($products['expiry']));
-        // $newdate = $myDateTime->format('Y-m-d');
-        // var_dump($products);
-        // exit;
         $this->set(compact('products'));
         
     }
@@ -45,11 +41,27 @@ class ProductsController extends AppController
             $data['cost'] = $data['price'] * $data['inventory'];
             $data['expiry'] = date("Y-m-d H:i:s");
 
-            
-            $product = $this->Products->patchEntity($product, $data);
-            
+               //upload image
+            if (!empty($data['image']['name'])) {
+               $filename = $data['image']['name'];
+                $uploadPath = WWW_ROOT.'/img/uploads/';
+                $uploadFile  = $uploadPath.$filename;
+            }
+            if(  (move_uploaded_file($data['image']['tmp_name'], $uploadFile))) {
+                 $data['image'] = $filename;
+            }
           
+         
+            
+            //getting all data
+            $product = $this->Products->patchEntity($product, $data);
+              
+            // var_dump($product);
+            // exit;
             if ($this->Products->save($product)) {
+               
+                 
+                
                 $this->Flash->success(__('The product has been saved.'));
 
                 return $this->redirect(['action' => 'index']);

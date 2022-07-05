@@ -6,7 +6,8 @@
 
         <div class="col-lg-6 ">
 
-            <img class="media-object" src="/img/<?= ($product->image == null) ? "default.png" : $product->image ?>"
+            <img class="media-object"
+                src="/img/uploads/<?= ($product->image == null) ? "default.png" : $product->image ?>"
                 alt="default image no image uploaded">
 
         </div>
