@@ -1,4 +1,4 @@
-<div class="panel panel-success">
+<div class="panel-primary">
     <div class="panel-heading">
         <h5> Produc information</h5>
     </div>

@@ -17,17 +17,14 @@ class ProductsController extends AppController
 
     public function index()
     {
-        $products = $this->Paginator->paginate($this->Products->find());
+        $products = $this->Products->find(); //$this->Paginator->paginate();
         $this->set(compact('products'));
-        
     }
 
 
     public function view($id = null)
     {
-        $product = $this->Products->get($id, [
-            'contain' => [],
-        ]);
+        $product = $this->Products->get($id);
 
         $this->set('product', $product);
     }
@@ -36,49 +33,96 @@ class ProductsController extends AppController
     public function add()
     {
         $product = $this->Products->newEntity();
+        
         if ($this->request->is('post')) {
-            $data =  $this->request->data;
-            $data['cost'] = $data['price'] * $data['inventory'];
-            $data['expiry'] = date("Y-m-d H:i:s");
 
+            $data =  $this->request->data;
+             // debug($data);
+            // exit;
+            $product['name'] = $data['name'];
+            $product['unit'] = $data['unit'];
+            $product['price'] = $data['price'];
+            $product['inventory'] = $data['inventory'];
+            $product['cost'] = $data['price'] * $data['inventory'];
+            $product['expiry'] = date("Y-m-d H:i:s", strtotime( $data['expiry']));
+             
+          
                //upload image
-            if (!empty($data['image']['name'])) {
-               $filename = $data['image']['name'];
+            if(!$data['image']['name']){
+                $filename = null;
+            }else {
+                if(!empty($data['image']['name'])) {
+                $filename = $data['image']['name'];
+               
                 $uploadPath = WWW_ROOT.'/img/uploads/';
                 $uploadFile  = $uploadPath.$filename;
-            }
-            if(  (move_uploaded_file($data['image']['tmp_name'], $uploadFile))) {
-                 $data['image'] = $filename;
-            }
-          
-         
-            
-            //getting all data
-            $product = $this->Products->patchEntity($product, $data);
-              
-            // var_dump($product);
-            // exit;
-            if ($this->Products->save($product)) {
-               
-                 
-                
-                $this->Flash->success(__('The product has been saved.'));
 
+                    if((move_uploaded_file($data['image']['tmp_name'], $uploadFile))) {
+                          $product['image'] = $filename;
+                        
+                    }
+                 }
+            } 
+             
+            //getting all data save to variable
+
+            $product['image'] = !isset($filename) ? null : $filename;
+            // $product['image'] = "test";
+                // debug($product);
+                //  exit;
+            // // $product = $this->Products->patchEntity($product, $data);
+           
+            if ($this->Products->save($product)) {
+                $this->Flash->success(__('The product has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The product could not be saved. Please, try again.'));
+           
         }
-        $this->set(compact('product'));
+         $this->set(compact('product'));
     }
 
 
     public function edit($id = null)
     {
-        $product = $this->Products->get($id, [
-            'contain' => [],
-        ]);
+        $product = $this->Products->get($id);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $product = $this->Products->patchEntity($product, $this->request->getData());
+           $data =  $this->request->data;
+             // debug($data);
+            // exit;
+          
+            $data['cost'] = $data['price'] * $data['inventory'];
+            $data['expiry'] = date("Y-m-d H:i:s", strtotime( $data['expiry']));
+             
+          
+               //upload image
+            if(!$data['image']['name']){
+                $filename = null;
+            }else {
+                if(!empty($data['image']['name'])) {
+                $filename = $data['image']['name'];
+               
+                $uploadPath = WWW_ROOT.'/img/uploads/';
+                $uploadFile  = $uploadPath.$filename;
+
+                    if((move_uploaded_file($data['image']['tmp_name'], $uploadFile))) {
+                          $data['image'] = $filename;
+                        
+                    }
+                 }
+            } 
+             
+            //getting all data save to variable
+
+            $data['image'] = !isset($filename) ? null : $filename;
+
+
+            $product = $this->Products->patchEntity($product, $data);
+            // debug($product);
+            // exit;
+            
+
             if ($this->Products->save($product)) {
                 $this->Flash->success(__('The product has been saved.'));
 
@@ -98,7 +142,6 @@ class ProductsController extends AppController
         } else {
             $this->Flash->error(__('The product could not be deleted. Please, try again.'));
         }
-
         return $this->redirect(['action' => 'index']);
     }
 }
