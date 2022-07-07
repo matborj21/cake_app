@@ -40,35 +40,36 @@ class ProductsTable extends Table
     {
         $validator
             ->integer('id')
-            ->allowEmptyString('id', null, 'create');
+            ->allowEmptyString('id', null, 'create')
 
-        $validator
-            ->scalar('name')
+        
+            ->scalar('name') 
             ->maxLength('name', 255)
-            ->requirePresence('name', 'create')
-            ->notEmptyString('name');
+            ->requirePresence('name', 'name must field out')
+            ->notEmptyString('name', 'Please fill this field')
 
-        $validator
+   
             ->scalar('unit')
             ->maxLength('unit', 255)
             ->requirePresence('unit', 'create')
-            ->notEmptyString('unit');
+            ->notEmptyString('unit', 'Please fill this field')
 
-        $validator
-            ->numeric('price')
-            ->allowEmptyString('price');
+      
+            ->decimal('price')
+            ->requirePresence('price', 'price must field out')
+            ->notEmptyString('price')
 
-        $validator
-            ->dateTime('expiry')
-            ->allowEmptyDateTime('expiry');
+   
+            ->scalar('expiry')
+             ->requirePresence('expiry', 'expiry must field out')
+            ->notemptyDateTime('expiry')
 
-        $validator
+    
             ->decimal('inventory')
-            ->allowEmptyString('inventory');
+            ->requirePresence('inventory', 'inventory must field out')
+            ->notEmptyString('inventory')
        
-        $validator
-            ->scalar('image')
-            ->maxLength('image', 255)
+    
             ->allowEmptyString('image');
 
         return $validator;

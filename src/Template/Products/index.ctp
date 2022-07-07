@@ -27,9 +27,13 @@
                 <td><?= h($product->cost)?></td>
                 <td>
 
+
+
+                    <input type="hidden" name="_method" value="PUT" />
                     <a class='btn btn-default btn-sm' href="/products/view/<?= $product->id?>">View</a>
                     <a class='btn btn-primary btn-sm' href="/products/edit/<?= $product->id?>">Edit</a>
-                    <a class='btn btn-danger btn-sm' href="/products/delete/<?= $product->id?>">Delete</a>
+                    <!-- <a class='btn btn-danger btn-sm' href="/products/delete/<?= $product->id?>">Delete</a> -->
+                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $product->id], ['confirm' => __('Are you sure you want to delete # {0}?', $product->id)]) ?>
 
                 </td>
             </tr> <?php endforeach; ?>

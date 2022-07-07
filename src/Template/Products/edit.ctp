@@ -30,7 +30,7 @@
     <form class="form-horizontal" method="post" action="/products/edit/<?= $product->id ?>"
         enctype="multipart/form-data">
         <fieldset>
-            <div><input type="hidden" name="_method" value="PUT" /></div>
+            <input type="hidden" name="_method" value="PUT" />
             <legend>Edit Product</legend>
             <div class=" form-group">
                 <label for="name" class="col-lg-2 control-label">Product Name</label>
@@ -56,7 +56,7 @@
             <div class="form-group">
                 <label for="expiry" class="col-lg-2 control-label">Product expiry</label>
                 <div class='input-group col-lg-6 date' id='datetimepicker'>
-                    <input type='text' name="expiry" class="form-control" value="<?= $product->expiry?>" />
+                    <input type='text' name="expiry" class="form-control" value="<?= $product->expiry ?>" />
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -72,8 +72,12 @@
             <div class="form-group">
                 <label for="image" class="col-lg-2 control-label">Product Image</label>
                 <div class="col-lg-6 input-group ">
-                    <input type="file" name="image" class="form-control" id="image" placeholder="Product image"
-                        value="<?= $product->image?>">
+                    <span class="input-group-addon">
+                        <span id="oldimage" value="<?= $product->image?>"><?= $product->image ?></span>
+                    </span>
+                    <input type="file" name="image" class="form-control" id="image" placeholder="Product image">
+
+
                 </div>
             </div>
 

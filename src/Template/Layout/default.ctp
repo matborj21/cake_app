@@ -33,6 +33,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     <?= $this->Html->css('fontawesome.min.css') ?>
     <?= $this->Html->css('custom.css') ?>
     <?= $this->Html->script('jquery.min.js') ?>
+    <?= $this->Html->script('bootstrapValidator.min.js') ?>
     <?= $this->Html->script('datatables.min.js') ?>
     <?= $this->Html->script('bootstrap.min.js') ?>
     <?= $this->Html->script('moment-with-locales.min.js') ?>
@@ -49,8 +50,10 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     <?= $this->element('nav') ?>
 
 
-    <?= $this->Flash->render() ?>
+
     <div class="col-md-10 clearfix">
+
+        <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
     </div>
 
