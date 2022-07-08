@@ -3,7 +3,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\I18n\Time;
-
+use Cake\ORM\Query;
 class ProductsController extends AppController
 {
   
@@ -17,20 +17,7 @@ class ProductsController extends AppController
 
     public function index()
     {
-        $products = $this->Products->find('all', [
-            'order' => ['Products.id' => 'DESC']
-        ]);//$this->Paginator->paginate();
-        
-        $products['draw'] = $_POST['draw'];
-        $products['id'] = isset($_POST['id']) ? $_POST['id'] : "";
-        $products['name'] = isset($_POST['name']) ? $_POST['name'] : "";
-        $products['limit'] = $_POST['length'];
-        $products['start'] = $_POST['start'];
-        $products['order_column'] = $_POST['order'][0]['column'];
-        $products['order'] = $_POST['order'][0]['dir'];
-        $products['search'] = $_POST['search']['value'];
-        // echo json_encode($products);
-        $this->set(compact('products'));
+      
     }
 
 
@@ -55,9 +42,9 @@ class ProductsController extends AppController
             $product['price'] = $data['price'];
             $product['inventory'] = $data['inventory'];
             $data['cost'] = floatval($data['price']) * floatval($data['inventory']);
-            $product['expiry'] = date("Y-m-d H:i:s", strtotime( $data['expiry']));
-             
-          
+            $data['expiry'] = Time::parseDate($data['expiry'], 'Y-M-d');
+        
+           
                //upload image
             if(!$data['image']['name']){
                 $filename = null;
@@ -79,7 +66,7 @@ class ProductsController extends AppController
             } 
             // null if no uploaded file will style to default.png(image)
             
-         
+        
                 
             // $product = $this->Products->patchEntity($product, $data);
                $product = $this->Products->newEntity($data);
@@ -99,16 +86,17 @@ class ProductsController extends AppController
     public function edit($id = null)
     {
         $product = $this->Products->get($id);
-
+        $product['expiry'] = date("m/d/Y", strtotime( $product['expiry']));
+        // debug($product);
+        // exit;
         if ($this->request->is(['patch', 'post', 'put'])) {
            $data =  $this->request->getData();
             //  debug($data);
             // exit;
           
             $data['cost'] = $data['price'] * $data['inventory'];
-            $expiry = Time::parse($data['expiry']);
-            $product['expiry'] = $expiry->i18nFormat('yyyy-MM-dd HH:mm:ss');
-            // $oldImage =  $data['oldimage'];
+            
+            $data['expiry'] =Time::parseDate($data['expiry'], 'Y-M-d');
 
 
                //upload image
@@ -145,7 +133,7 @@ class ProductsController extends AppController
 
     public function delete($id = null)
     {
-        $this->request->allowMethod(['post', 'delete']);
+        $this->request->is(['post', 'delete']);
         $product = $this->Products->get($id);
         if ($this->Products->delete($product)) {
             $this->Flash->success(__('The product has been deleted.'));
@@ -178,19 +166,16 @@ class ProductsController extends AppController
                                     'unit' => $data[1],
                                     'price' => $data[2],
                                     'inventory' => $data[3],
-                                     $expiry = Time::parse($data[4]),
-                                    'expiry' => $expiry->i18nFormat('yyyy-MM-dd HH:mm:ss'),
-                                    // 'expiry'=> date("Y-m-d H:i:s", strtotime( $data[4])),
+                                    'expiry' =>Time::parseDate($data[4], 'Y-M-d'),
                                      'cost' => floatval($data[3]) * floatval($data[2])
                                 );
-                
-                           
                             }
-                             $row++; 
-
+                             $row++;
                         }
-
+                        
+                        
                          $product = $this->Products->newEntities($result);
+                        //  debug($product);
                          if($this->Products->saveMany($product)){
                                 $this->Flash->success(__('The product has been deleted.'));
                             } else {
@@ -214,10 +199,89 @@ class ProductsController extends AppController
         $data->toArray();
         
 		$_serialize = 'data';
-   		$this->set(compact('data', '_serialize'));
-		$this->viewBuilder()->className('CsvView.Csv');
+        $_header = ['ID', 'PRODUCT NAME', 'PRODUCT UNIT', 'PRODUCT PRICE', 'PRODUCT EXPIRY', 'PRODUCT INVENTORY', 'PRODUCT COST'];
+   		$this->set(compact('data', '_header', '_serialize'));
+		$this->viewBuilder()->setClassName('CsvView.Csv');
 		return;
    
     }
+
     
+    public function viewDataTable()
+    {
+         $requestData = $this->request->getData();
+         $starts = $requestData['start'];
+         $length = $requestData['length'];
+         $columnIndex = $requestData['order'][0]['column']; // Column index
+         $columnName = $requestData['columns'][$columnIndex]['data']; // Column name
+         $columnSortOrder = $requestData['order'][0]['dir']; // asc or desc
+       
+        //  debug($columnSortOrder);
+        //  exit;
+         
+       
+        $searchValue = $requestData['search']['value'];
+        $searchCondition = '';
+            if ( $searchValue != '')
+            {
+            $searchCondition = array (
+                               
+                                'name LIKE' => "%" . $searchValue . "%",
+                                'unit LIKE' => "%" . $searchValue . "%",
+                                'price LIKE' => "%" . $searchValue . "%",
+                                'inventory LIKE' => "%" . $searchValue . "%",
+                                'cost LIKE' => "%" . $searchValue . "%",
+                                'expiry LIKE' => "%" . $searchValue . "%",
+                            );
+            }
+        $where = [
+            
+            '1' => '1',
+            'or' => $searchCondition,
+
+        ];
+
+
+        $orderby = [
+            $columnName  => $columnSortOrder
+        ];
+
+        $products = $this->Products->find()
+          ->where($where, ['id' => 'string'])
+          ->limit($length)
+          ->order($orderby)
+          ->offset($starts);
+
+
+        $data = []; 
+        foreach($products as $row) {
+            $nestedData = [];
+            $nestedData = $row;
+
+            $nestedData['id'] = $row['id'];
+            $nestedData['name'] = $row['name'];
+            $nestedData['unit'] = $row['unit'];
+            $nestedData['price'] = $row['price'];
+            $nestedData['inventory'] = $row['inventory'];
+            $nestedData['cost'] = $row['cost'];
+            $nestedData['expiry'] = (!empty($row['expiry'])) ? date('Y-m-d',strtotime($row['expiry'])) : '';
+            $nestedData['button'] = "<a class='btn btn-default btn-sm' href='/products/view/{$row['id']}'>View</a>
+                                     <a class='btn btn-primary btn-sm' href='/products/edit/{$row['id']}'>Edit</a>
+                                     <a class='btn btn-danger btn-sm' href='/products/delete/{$row['id']}'>Delete</a>";
+             $data[] = $nestedData;
+
+        }
+
+        $totalData = $products->count();
+        $json_data = array(
+        "draw" => intval( $requestData['draw'] ),
+        "recordsTotal" => intval( $totalData ),
+        "recordsFiltered" => intval( $totalData ),
+        "data" => $data
+         
+
+        );
+        echo json_encode($json_data);
+        exit;
+    }
 }

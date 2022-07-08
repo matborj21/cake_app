@@ -13,48 +13,47 @@ const product_inventory = document.getElementById('inventory');
 // });
 
 $(function () {
-$('#datetimepicker').datetimepicker();
+$('#datetimepicker').datetimepicker(
+   {
+     format : 'L'
+   }
+);
 });
-
-$(document).ready( function () {
+$(document).ready(function() {
     $('#table_id').DataTable({
         'responsive': true,
         'processing': true,
         'serverSide': true,
-        'serverMethod' : 'post',
+        'serverMethod': 'post',
         'ajax': {
-            url: '/products/index',
-           
-            
+            url: '/products/viewDataTable',
         },
-        'columns': [
-            { data: 'name' },
-            { data: 'unit' },
-            { data: 'price' },
-            { data: 'inventory' },
-            { data: 'cost' },
-            { data: 'expiry' },
+        'columns': [{
+                data: 'id'
+            },
+            {
+                data: 'name'
+            },
+            {
+                data: 'unit'
+            },
+            {
+                data: 'price'
+            },
+            {
+                data: 'inventory'
+            },
+            {
+                data: 'cost'
+            },
+            {
+                data: 'expiry'
+            },
+            {
+                data: 'button'
+            },
         ],
     });
-} );
+});
 
 
-
-// inmport CSV File
-
-// $(document).on('submit', '#csv_import', function(e) {
-//     e.preventDefault();
-    
-//     $.ajax({
-//         url: '/products/csvimport',
-//         method: 'POST',
-//         data: new FormData($this),
-//         dataType: 'json',
-//         contentType: false,
-//         cache: false,
-//         proccessData: false,
-//         success: function(jsonData){
-
-//         }
-//     });
-// });

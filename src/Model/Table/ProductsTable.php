@@ -60,7 +60,7 @@ class ProductsTable extends Table
             ->notEmptyString('price')
 
    
-            ->scalar('expiry')
+            ->dateTime('expiry')
              ->requirePresence('expiry', 'expiry must field out')
             ->notemptyDateTime('expiry')
 
