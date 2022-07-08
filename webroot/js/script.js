@@ -21,6 +21,8 @@ $('#datetimepicker').datetimepicker(
 });
 $(document).ready(function() {
     $('#table_id').DataTable({
+        'pagingType': 'full_numbers',
+        'paging' : true,
         'responsive': true,
         'processing': true,
         'serverSide': true,
@@ -54,6 +56,11 @@ $(document).ready(function() {
             },
         ],
     });
+
+    /// delete record from ajax
+   
 });
+
+
 
 

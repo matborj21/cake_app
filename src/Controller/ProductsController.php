@@ -131,9 +131,10 @@ class ProductsController extends AppController
         $this->set(compact('product'));
     }
 
-    public function delete($id = null)
+    public function delete()
     {
         $this->request->is(['post', 'delete']);
+        $id = $this->request->getData();
         $product = $this->Products->get($id);
         if ($this->Products->delete($product)) {
             $this->Flash->success(__('The product has been deleted.'));
@@ -157,10 +158,7 @@ class ProductsController extends AppController
                if (($handle = fopen($postData['csv_file']['tmp_name'], "r")) !== FALSE) {
                     while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                          
-                        
                         if(!empty($row != 1)){
-                            
-
                                 $result[] = array(
                                     'name' => $data[0],
                                     'unit' => $data[1],
@@ -225,7 +223,6 @@ class ProductsController extends AppController
             if ( $searchValue != '')
             {
             $searchCondition = array (
-                               
                                 'name LIKE' => "%" . $searchValue . "%",
                                 'unit LIKE' => "%" . $searchValue . "%",
                                 'price LIKE' => "%" . $searchValue . "%",
@@ -235,21 +232,19 @@ class ProductsController extends AppController
                             );
             }
         $where = [
-            
             '1' => '1',
             'or' => $searchCondition,
-
         ];
 
 
-        $orderby = [
+        $order = [
             $columnName  => $columnSortOrder
         ];
 
         $products = $this->Products->find()
           ->where($where, ['id' => 'string'])
           ->limit($length)
-          ->order($orderby)
+          ->order($order)
           ->offset($starts);
 
 
@@ -267,7 +262,7 @@ class ProductsController extends AppController
             $nestedData['expiry'] = (!empty($row['expiry'])) ? date('Y-m-d',strtotime($row['expiry'])) : '';
             $nestedData['button'] = "<a class='btn btn-default btn-sm' href='/products/view/{$row['id']}'>View</a>
                                      <a class='btn btn-primary btn-sm' href='/products/edit/{$row['id']}'>Edit</a>
-                                     <a class='btn btn-danger btn-sm' href='/products/delete/{$row['id']}'>Delete</a>";
+                                     <a class='btn btn-danger btn-sm deletebtn' id='{$row['id']}'>Delete</a>";
              $data[] = $nestedData;
 
         }

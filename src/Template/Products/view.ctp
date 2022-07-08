@@ -29,6 +29,30 @@
 <div class="panel-footer">
     <a class="btn btn-default btn-xs" href="/products">Back</a>
     <a class="btn btn-primary  btn-xs" href="/products/edit/<?= $product->id ?>">Edit</a>
-    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $product->id], ['confirm' => __('Are you sure you want to delete # {0}?', $product->id)]) ?>
+    <a class='btn btn-danger btn-xs deletebtn' id="<?= $product->id ?>">Delete</a>
 </div>
 </div>
+
+<script>
+$(document).on('click', '.deletebtn', function(e) {
+    const id = $(this).attr('id');
+
+    // const row_to_delete = $(this).parent().parent();
+    if (confirm('are you sure you want to delete record?')) {
+        $.ajax({
+            type: "post",
+            url: "<?= $this->Url->build(['action' => 'delete']) ?>",
+            data: {
+                id: id
+            },
+            // dataType: "html",                  
+            success: function(data) {
+                window.location.href = "<?php echo $this->Url->build(['action' => 'index']); ?>"
+            }
+        });
+
+    }
+    return false
+
+});
+</script>
