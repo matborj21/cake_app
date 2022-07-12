@@ -41,7 +41,7 @@ class ProductsTable extends Table
         $validator
             ->integer('id')
             ->allowEmptyString('id', null, 'create')
-
+        
         
             ->scalar('name') 
             ->maxLength('name', 255)
@@ -73,5 +73,12 @@ class ProductsTable extends Table
             ->allowEmptyString('image');
 
         return $validator;
+    }
+   
+
+    public function CheckIfExist($name)
+    {
+        $query = $this->find()->where(['name' => $name])->count();
+        return $query;
     }
 }

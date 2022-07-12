@@ -22,13 +22,13 @@ $('#datetimepicker').datetimepicker(
 $(document).ready(function() {
     $('#table_id').DataTable({
         'pagingType': 'full_numbers',
-        'paging' : true,
-        'responsive': true,
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
             url: '/products/viewDataTable',
+            dataSrc: 'data'
+          
         },
         'columns': [{
                 data: 'id'
@@ -58,6 +58,7 @@ $(document).ready(function() {
     });
 
     /// delete record from ajax
+   
    
 });
 

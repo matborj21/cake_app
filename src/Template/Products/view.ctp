@@ -29,7 +29,7 @@
 <div class="panel-footer">
     <a class="btn btn-default btn-xs" href="/products">Back</a>
     <a class="btn btn-primary  btn-xs" href="/products/edit/<?= $product->id ?>">Edit</a>
-    <a class='btn btn-danger btn-xs deletebtn' id="<?= $product->id ?>">Delete</a>
+    <a class='btn btn-danger btn-xs deletebtn' id="<?= $product->id?>">Delete</a>
 </div>
 </div>
 
@@ -41,7 +41,7 @@ $(document).on('click', '.deletebtn', function(e) {
     if (confirm('are you sure you want to delete record?')) {
         $.ajax({
             type: "post",
-            url: "<?= $this->Url->build(['action' => 'delete']) ?>",
+            url: "/products/delete",
             data: {
                 id: id
             },
