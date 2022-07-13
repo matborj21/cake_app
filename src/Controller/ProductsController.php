@@ -2,9 +2,11 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\I18n\Date;
 use Cake\I18n\Time;
 use Cake\ORM\Query;
 use LDAP\Result;
+
 
 class ProductsController extends AppController
 {
@@ -43,8 +45,12 @@ class ProductsController extends AppController
             $product['price'] = $data['price'];
             $product['inventory'] = $data['inventory'];
             $data['cost'] = floatval($data['price']) * floatval($data['inventory']);
-            $data['expiry'] = Time::parseDate($data['expiry'], 'Y-M-d');
-        
+            $data['expiry'] = Time::parse($data['expiry']);
+            // $product['expiry'] = Type::build('datetime')->useLocaleParser()->setLocaleFormat('Y-m-y');
+    
+                                     
+                    
+    
            
                //upload image
             if(!$data['image']['name']){
@@ -67,11 +73,13 @@ class ProductsController extends AppController
             } 
             // null if no uploaded file will style to default.png(image)
             
-        
-                
+          
+            
             // $product = $this->Products->patchEntity($product, $data);
                $product = $this->Products->newEntity($data);
-           
+               
+            //      debug($product);
+            // exit;
             if ($this->Products->save($product)) {
                 $this->Flash->success(__('The product has been saved.'));
                 return $this->redirect(['action' => 'index']);
@@ -95,7 +103,7 @@ class ProductsController extends AppController
             // exit;
           
             $data['cost'] = $data['price'] * $data['inventory'];
-            $data['expiry'] =Time::parseDate($data['expiry'], 'Y-M-d');
+            $data['expiry'] = Time::parse($data['expiry']);
 
 
                //upload image
@@ -163,26 +171,27 @@ class ProductsController extends AppController
                             $check = $item->CheckIfExist($data[0]); // check if name is already in the database
                             
                             
-                               if($check == 0 ){ // if the name is already in the database it will not include on array variable
-                                 $result[] = array(
+                               if($check != 0 ){ // if the name is already in the database it will not include on array variable
+                                    //  $this->Flash->error(__('The product could not be save. duplicate record found.'));
+                               }else {
+                                    
+                                     $result[] = array(
                                     'name' => $data[0],
                                     'unit' => $data[1],
                                     'price' => $data[2],
                                     'inventory' => $data[3],
-                                    'expiry' =>Time::parseDate($data[4], 'Y-M-d'),
+                                    'expiry' => Time::parse($data[4]),
                                      'cost' => floatval($data[3]) * floatval($data[2])
                                 );
                                }
-                               else {
-                                    $this->Flash->error(__('The product could not be save. duplicate record found.'));
-                               }
+                               
                                
                             }
                              $row++;
                         }
 
-                        debug($result);
-                        exit;
+                        // debug($result);
+                        // exit;
                              
                          $product = $this->Products->newEntities($result);
                         
@@ -200,7 +209,12 @@ class ProductsController extends AppController
                   fclose($handle);
                   return $this->redirect(['action' => 'index']);
            }
+           else {
+                $this->Flash->error(__('Please choose file to upload.'));
+                return $this->redirect(['action' => 'add']);
+           }
         }
+        
     }
 
     public function exportcsv()
@@ -247,8 +261,8 @@ class ProductsController extends AppController
                                 'expiry LIKE' => "%" . $searchValue . "%",
                             );
             }
-        $where = [
-            '1' => '1', // WHERE 1=1 clause is merely a convention adopted by some developers to make working with their SQL statements a little easier
+        $where = [  // WHERE 1=1 clause is merely a convention adopted by some developers 
+            '1' => '1', //to make working with their SQL statements a little easier
             'or' => $searchCondition,
         ];
 

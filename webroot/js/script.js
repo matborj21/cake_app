@@ -7,10 +7,10 @@ const product_inventory = document.getElementById('inventory');
 
 
 
-// $(document).on('submit', '#saveForm', function (e) {
-//     e.preventDefault();
-  
-// });
+$(function () { 
+    var duration = 4000; // 4 seconds
+    setTimeout(function () { $('.alert').hide(); }, duration);
+});
 
 $(function () {
 $('#datetimepicker').datetimepicker(

@@ -5,7 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-
+use Cake\Database\Type;
 /**
  * Products Model
  *
@@ -38,6 +38,7 @@ class ProductsTable extends Table
   
     public function validationDefault(Validator $validator)
     {
+       
         $validator
             ->integer('id')
             ->allowEmptyString('id', null, 'create')
@@ -73,6 +74,7 @@ class ProductsTable extends Table
             ->allowEmptyString('image');
 
         return $validator;
+        
     }
    
 
